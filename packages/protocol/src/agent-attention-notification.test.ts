@@ -43,7 +43,7 @@ describe("buildAgentAttentionNotificationPayload", () => {
     });
   });
 
-  it("builds permission notifications from request details", () => {
+  it("builds permission notifications from request details with actionable category", () => {
     const payload = buildAgentAttentionNotificationPayload({
       reason: "permission",
       serverId: "srv-2",
@@ -67,7 +67,10 @@ describe("buildAgentAttentionNotificationPayload", () => {
         workspaceId: "workspace-2",
         agentId: "agent-2",
         reason: "permission",
+        permissionRequestId: "perm-1",
       },
+      categoryId: "agentPermission",
+      mutableContent: true,
     });
   });
 
