@@ -4,6 +4,10 @@ export interface PushPayload {
   title: string;
   body: string;
   data?: Record<string, unknown>;
+  /** iOS notification category ID for actionable notifications (Approve/Deny buttons) */
+  categoryId?: string;
+  /** Enables background notification processing for approval actions */
+  mutableContent?: boolean;
 }
 
 interface ExpoPushMessage {
@@ -12,6 +16,9 @@ interface ExpoPushMessage {
   body: string;
   data?: Record<string, unknown>;
   sound?: "default";
+  categoryId?: string;
+  mutableContent?: boolean;
+  _contentAvailable?: boolean;
 }
 
 interface ExpoPushTicket {
@@ -48,6 +55,9 @@ export class PushService {
       body: payload.body,
       data: payload.data,
       sound: "default",
+      categoryId: payload.categoryId,
+      mutableContent: payload.mutableContent,
+      _contentAvailable: payload.mutableContent ? true : undefined,
     }));
 
     // Batch tokens (max 100 per request per Expo limits)

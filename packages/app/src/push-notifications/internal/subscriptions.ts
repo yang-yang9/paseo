@@ -9,6 +9,38 @@ import type { RevokePushNotificationsInput, StartPushNotificationsInput } from "
 const STORAGE_PREFIX = "@paseo:expo-push-token:";
 const ExpoPushTokenSchema = z.string().trim().min(1);
 
+/**
+ * Notification category for agent permission requests.
+ * Adds Approve/Deny action buttons on iOS notification banners
+ * and Apple Watch notifications.
+ */
+export const AGENT_PERMISSION_CATEGORY = "agentPermission";
+
+/**
+ * Registers notification categories for actionable notifications.
+ * The "agentPermission" category adds Approve and Deny buttons
+ * that appear on both iPhone notification banners and Apple Watch.
+ */
+function registerNotificationCategories(): void {
+  Notifications.setNotificationCategoryAsync(AGENT_PERMISSION_CATEGORY, [
+    {
+      identifier: "approve",
+      buttonTitle: "Approve",
+      options: {
+        opensAppToForeground: false,
+      },
+    },
+    {
+      identifier: "deny",
+      buttonTitle: "Deny",
+      options: {
+        opensAppToForeground: false,
+        isDestructive: true,
+      },
+    },
+  ]);
+}
+
 function storageKey(serverId: string): string {
   return `${STORAGE_PREFIX}${serverId}`;
 }
@@ -59,6 +91,10 @@ async function resolveToken(serverId: string): Promise<string | null> {
 export function startSubscription(input: StartPushNotificationsInput): () => void {
   let stopped = false;
   let token: string | null = null;
+
+  // Register actionable notification categories for agent approval
+  registerNotificationCategories();
+
   const register = () => {
     if (!stopped && token && input.client.isConnected) {
       input.client.registerPushToken(token);

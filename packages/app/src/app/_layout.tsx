@@ -139,6 +139,11 @@ import {
   WEB_NOTIFICATION_CLICK_EVENT,
   type WebNotificationClickDetail,
 } from "@/utils/os-notifications";
+import {
+  extractNotificationActionContext,
+  handleNotificationAction,
+} from "@/push-notifications/notification-action-handler";
+import { getHostRuntimeStore } from "@/runtime/host-runtime";
 
 polyfillNavigator();
 polyfillCrypto();
@@ -162,6 +167,39 @@ const HostRuntimeBootstrapContext = createContext<HostRuntimeBootstrapState>({
 function PushNotificationRouter() {
   const router = useRouter();
   const lastHandledIdRef = useRef<string | null>(null);
+
+  const handleNotificationActionResponse = useCallback(
+    async (
+      serverId: string,
+      action: "approve" | "deny",
+      data: Record<string, unknown> | undefined,
+    ) => {
+      const context = extractNotificationActionContext(data);
+      if (!context) return;
+
+      try {
+        const store = getHostRuntimeStore();
+        const client = store.getSnapshot(serverId)?.client;
+        if (!client) {
+          console.warn(
+            "[PushNotificationRouter] No client found for server",
+            serverId,
+          );
+          return;
+        }
+
+        await handleNotificationAction(action, {
+          client,
+          agentId: context.agentId,
+          permissionRequestId: context.permissionRequestId,
+        });
+      } catch (error) {
+        console.warn("[PushNotificationRouter] Failed to handle notification action:", error);
+      }
+    },
+    [],
+  );
+
   const openNotification = useStableEvent((data: Record<string, unknown> | undefined) => {
     const target = resolveNotificationTarget(data);
     const serverId = target.serverId;
@@ -247,6 +285,17 @@ function PushNotificationRouter() {
       const data = response.notification.request.content.data as
         | Record<string, unknown>
         | undefined;
+
+      // Handle actionable notification buttons (Approve/Deny)
+      const actionId = response.actionIdentifier;
+      if (actionId === "approve" || actionId === "deny") {
+        const serverId = typeof data?.serverId === "string" ? data.serverId : undefined;
+        if (serverId) {
+          void handleNotificationActionResponse(serverId, actionId, data);
+        }
+        return;
+      }
+
       openNotification(data);
     };
 

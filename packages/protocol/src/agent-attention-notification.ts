@@ -14,6 +14,10 @@ export interface AgentAttentionNotificationPayload {
   title: string;
   body: string;
   data: AgentAttentionNotificationData;
+  /** iOS notification category for actionable buttons (Approve/Deny) */
+  categoryId?: string;
+  /** Enable background processing for approval actions */
+  mutableContent?: boolean;
 }
 
 interface BuildAgentAttentionNotificationPayloadInput {
@@ -199,6 +203,7 @@ export function buildAgentAttentionNotificationPayload(
   const title = resolveAgentAttentionTitle(input.reason);
   const preview = resolveAgentAttentionPreview(input);
   const body = preview ?? resolveAgentAttentionFallbackBody(input.reason);
+  const isPermission = input.reason === "permission";
 
   return {
     title,
@@ -208,6 +213,14 @@ export function buildAgentAttentionNotificationPayload(
       workspaceId: input.workspaceId,
       agentId: input.agentId,
       reason: input.reason,
+      // Include permission request ID so the app can respond to it
+      ...(input.permissionRequest?.id ? { permissionRequestId: input.permissionRequest.id } : {}),
     },
+    // Enable actionable notifications (Approve/Deny) for permission requests
+    // These appear on both iPhone and Apple Watch
+    ...(isPermission && {
+      categoryId: "agentPermission",
+      mutableContent: true,
+    }),
   };
 }
