@@ -194,6 +194,24 @@ const MOCK_SLOW_MODES: AgentProviderModeDefinition[] = [
   },
 ];
 
+const QODER_MODES: AgentProviderModeDefinition[] = [
+  {
+    id: "default",
+    label: "Default",
+    description: "Standard agent mode with permission prompts",
+    icon: "Shield",
+    colorTier: "safe",
+  },
+  {
+    id: "yolo",
+    label: "YOLO (Auto-approve)",
+    description: "Skip all permission prompts. Use with caution.",
+    icon: "ShieldOff",
+    colorTier: "dangerous",
+    isUnattended: true,
+  },
+];
+
 export const AGENT_PROVIDER_DEFINITIONS: AgentProviderDefinition[] = [
   {
     id: "claude",
@@ -225,6 +243,13 @@ export const AGENT_PROVIDER_DEFINITIONS: AgentProviderDefinition[] = [
     description: "GitHub Copilot via Agent Client Protocol with dynamic modes and session support",
     defaultModeId: "https://agentclientprotocol.com/protocol/session-modes#agent",
     modes: COPILOT_MODES,
+  },
+  {
+    id: "qoder",
+    label: "Qoder",
+    description: "AI coding assistant with agentic capabilities, MCP support, and ACP protocol",
+    defaultModeId: "default",
+    modes: QODER_MODES,
   },
   {
     id: "opencode",

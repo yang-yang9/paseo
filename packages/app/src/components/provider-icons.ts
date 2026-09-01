@@ -6,6 +6,7 @@ import { CodexIcon } from "@/components/icons/codex-icon";
 import { CopilotIcon } from "@/components/icons/copilot-icon";
 import { MiniMaxIcon } from "@/components/icons/minimax-icon";
 import { OpenCodeIcon } from "@/components/icons/opencode-icon";
+import { QoderIcon } from "@/components/icons/qoder-icon";
 import { OmpIcon } from "@/components/icons/omp-icon";
 import { PiIcon } from "@/components/icons/pi-icon";
 import { ACP_PROVIDER_CATALOG } from "@/data/acp-provider-catalog";
@@ -24,6 +25,7 @@ const BUILTIN_PROVIDER_ICONS: Record<string, ProviderIconComponent> = {
   copilot: CopilotIcon as unknown as ProviderIconComponent,
   kiro: PackagePlus,
   minimax: MiniMaxIcon as unknown as ProviderIconComponent,
+  qoder: QoderIcon as unknown as ProviderIconComponent,
   omp: OmpIcon as unknown as ProviderIconComponent,
   opencode: OpenCodeIcon as unknown as ProviderIconComponent,
   pi: PiIcon as unknown as ProviderIconComponent,

@@ -41,6 +41,7 @@ import { CursorACPAgentClient } from "./providers/cursor-acp-agent.js";
 import { GenericACPAgentClient } from "./providers/generic-acp-agent.js";
 import { KimiACPAgentClient } from "./providers/kimi-acp-agent.js";
 import { KiroACPAgentClient } from "./providers/kiro-acp-agent.js";
+import { QoderACPAgentClient } from "./providers/qoder-acp-agent.js";
 import { OpenCodeAgentClient } from "./providers/opencode-agent.js";
 import type { OpenCodeBridge } from "./providers/opencode/bridge.js";
 import { OmpAgentClient } from "./providers/omp/agent.js";
@@ -203,6 +204,11 @@ const PROVIDER_CLIENT_FACTORIES: Record<string, ProviderClientFactory> = {
     }),
   copilot: (logger, runtimeSettings) =>
     new CopilotACPAgentClient({
+      logger,
+      runtimeSettings,
+    }),
+  qoder: (logger, runtimeSettings) =>
+    new QoderACPAgentClient({
       logger,
       runtimeSettings,
     }),
